@@ -1,0 +1,21 @@
+def process_text(text):
+    consonant_letters = "bcdfghjklmnpqrstvwxyz"
+    text_lower = text.lower()
+    
+    consonant_list = [c for c in text_lower if c in consonant_letters]
+    consonants_sorted = ''.join(sorted(consonant_list))
+    
+    space_count = text.count(' ')
+    multiple_spaces = space_count > 1
+    
+    return consonants_sorted, multiple_spaces
+
+
+# Демонстрація використання функції
+if __name__ == "__main__":
+    user_input = input("Введіть текст для перевірки: ")
+    analysis = process_text(user_input)
+    
+    print("\nАналіз завершено:")
+    print(f"Всі приголосні у порядку алфавіту: {analysis[0]}")
+    print(f"Чи є більше одного пробілу: {analysis[1]}")
