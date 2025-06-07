@@ -1,0 +1,36 @@
+from fastapi import FastAPI, Query, HTTPException
+from typing import Optional
+
+app = FastAPI(title="Ресторанне меню — API")
+
+# Умовна база даних страв
+menu_items = [
+    {"id": 1, "name": "Борщ по-домашньому", "category": "супи", "price": 95.0},
+    {"id": 2, "name": "Вареники з сиром", "category": "супи", "price": 82.0},
+    {"id": 3, "name": "Котлета по-київськи", "category": "основне", "price": 125.0},
+    {"id": 4, "name": "Картопляні деруни", "category": "основне", "price": 87.0},
+    {"id": 5, "name": "Узвар", "category": "напої", "price": 32.0},
+    {"id": 6, "name": "Пломбір у шоколаді", "category": "десерти", "price": 52.0},
+    {"id": 7, "name": "Лате", "category": "напої", "price": 48.0}
+]
+
+# Головна сторінка
+@app.get("/")
+async def home():
+    return {"message": "Для перегляду меню зверніться до /menu?category=напої або без параметра"}
+
+# Отримати меню з фільтрацією за категорією
+@app.get("/menu")
+async def read_menu(category: Optional[str] = Query(None, description="Вкажіть категорію: супи, основне, десерти, напої")):
+    result = [dish for dish in menu_items if category is None or dish["category"].lower() == category.lower()]
+    if not result:
+        raise HTTPException(status_code=404, detail="Категорію не знайдено або меню порожнє")
+    return {"items": result}
+
+# Отримати конкретну страву за ID
+@app.get("/menu/{dish_id}")
+async def get_dish(dish_id: int):
+    dish = next((d for d in menu_items if d["id"] == dish_id), None)
+    if not dish:
+        raise HTTPException(status_code=404, detail="Страву не знайдено")
+    return dish
